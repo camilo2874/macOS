@@ -1,126 +1,433 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>macOS Server: Un Viaje Interactivo</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .nav-link {
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            cursor: pointer;
-        }
-        .nav-link:hover, .nav-link.active {
-            background-color: #0284c7; /* sky-600 */
-            color: white;
-        }
-        .section-content { display: none; }
-        .section-content.active { display: block; }
-        .timeline-item {
-            position: relative;
-            padding-left: 2.5rem;
-            padding-bottom: 2rem;
-            border-left: 2px solid #cbd5e1; /* slate-300 */
-        }
-        .timeline-item:last-child {
-            border-left: 2px solid transparent;
-            padding-bottom: 0;
-        }
-        .timeline-marker {
-            position: absolute;
-            left: -0.5625rem; /* Adjust to center on the line */
-            top: 0;
-            width: 1.125rem;
-            height: 1.125rem;
-            border-radius: 9999px;
-            background-color: #0284c7; /* sky-600 */
-            border: 2px solid #f1f5f9; /* slate-100 */
-        }
-        .service-card {
-            border: 1px solid #e2e8f0; /* slate-200 */
-            border-radius: 0.5rem;
-            padding: 1rem;
-            background-color: white;
-            transition: box-shadow 0.3s ease;
-            cursor: pointer;
-        }
-        .service-card:hover {
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
-        }
-        .tab-button {
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem 0.375rem 0 0;
-            cursor: pointer;
-            background-color: #e2e8f0; /* slate-200 */
-            color: #334155; /* slate-700 */
-            border: 1px solid #cbd5e1; /* slate-300 */
-            border-bottom: none;
-        }
-        .tab-button.active {
-            background-color: white;
-            color: #0284c7; /* sky-600 */
-            border-bottom: 1px solid white;
-            position: relative;
-            top: 1px;
-        }
-        .tab-content {
-            display: none;
-            padding: 1rem;
-            border: 1px solid #cbd5e1; /* slate-300 */
-            border-top: none;
-            border-radius: 0 0 0.375rem 0.375rem;
-            background-color: white;
-        }
-        .tab-content.active { display: block; }
-        .accordion-button {
-            background-color: #f8fafc; /* slate-50 */
-            color: #1e293b; /* slate-800 */
-            padding: 0.75rem 1rem;
-            width: 100%;
-            text-align: left;
-            border: 1px solid #e2e8f0; /* slate-200 */
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-        .accordion-button:hover { background-color: #e2e8f0; /* slate-200 */ }
-        .accordion-content {
-            display: none;
-            padding: 1rem;
-            border: 1px solid #e2e8f0; /* slate-200 */
-            border-top: none;
-            border-radius: 0 0 0.375rem 0.375rem;
-            background-color: white;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 400px; /* max-w-md equivalent */
-            margin-left: auto;
-            margin-right: auto;
-            height: 300px; /* Base height */
-            max-height: 350px;
-        }
-        @media (min-width: 768px) { /* md breakpoint */
-            .chart-container { height: 350px; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explorador Interactivo: macOS Server</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .nav-link {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      cursor: pointer;
+    }
+    .nav-link:hover, .nav-link.active {
+      background-color: #0284c7;
+      color: white;
+    }
+    .section-content { display: none; }
+    .section-content.active { display: block; }
+
+    .timeline-item {
+      position: relative;
+      padding-left: 2.5rem;
+      padding-bottom: 2rem;
+      border-left: 2px solid #cbd5e1;
+    }
+    .timeline-item:last-child {
+      border-left-color: transparent;
+      padding-bottom: 0;
+    }
+    .timeline-marker {
+      position: absolute;
+      left: -0.5625rem;
+      top: 0;
+      width: 1.125rem;
+      height: 1.125rem;
+      border-radius: 9999px;
+      background-color: #0284c7;
+      border: 2px solid #f1f5f9;
+    }
+
+    .service-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      background-color: white;
+      transition: box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .service-card:hover {
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1),
+                  0 2px 4px -2px rgba(0,0,0,0.1);
+    }
+
+    .tab-button {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem 0.375rem 0 0;
+      cursor: pointer;
+      background-color: #e2e8f0;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      border-bottom: none;
+    }
+    .tab-button.active {
+      background-color: white;
+      color: #0284c7;
+      border-bottom: 1px solid white;
+      position: relative;
+      top: 1px;
+    }
+    .tab-content {
+      display: none;
+      padding: 1rem;
+      border: 1px solid #cbd5e8;
+      border-top: none;
+      border-radius: 0 0 0.375rem 0.375rem;
+      background-color: white;
+    }
+    .tab-content.active { display: block; }
+
+    .accordion-button {
+      background-color: #f8fafc;
+      color: #1e293b;
+      padding: 0.75rem 1rem;
+      width: 100%;
+      text-align: left;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .accordion-button:hover { background-color: #e2e8f0; }
+    .accordion-content {
+      display: none;
+      padding: 1rem;
+      border: 1px solid #e2e8f0;
+      border-top: none;
+      border-radius: 0 0 0.375rem 0.375rem;
+      background-color: white;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      height: 300px;
+      max-height: 350px;
+    }
+    @media (min-width: 768px) {
+      .chart-container { height: 350px; }
+    }
+  </style>
 </head>
 <body class="bg-slate-100 text-slate-800">
-    <!-- Ejemplo de contenido funcional -->
-    <div class="min-h-screen flex flex-col items-center justify-center">
-        <h1 class="text-3xl font-bold mb-4 text-sky-700">¡macOS Server: Un Viaje Interactivo!</h1>
-        <p class="mb-6 text-lg text-slate-700">Bienvenido a tu app desplegada correctamente en Vercel.</p>
-        <div class="service-card mb-4">
-            <h2 class="text-xl font-semibold mb-2">Servicio Destacado</h2>
-            <p>Este es un ejemplo de tarjeta de servicio usando tu CSS y Tailwind.</p>
-        </div>
-        <button class="nav-link active">Botón de ejemplo</button>
+
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center">
+      <h1 class="text-2xl font-bold text-sky-700">macOS Server: Un Viaje Interactivo</h1>
+      <nav id="mainNav" class="flex flex-wrap justify-center sm:justify-end space-x-1 sm:space-x-2 mt-2 sm:mt-0">
+        <button data-section="inicio" class="nav-link active">Inicio</button>
+        <button data-section="evolucion" class="nav-link">Evolución</button>
+        <button data-section="servicios" class="nav-link">Servicios Clave</button>
+        <button data-section="transicion" class="nav-link">Transición y Futuro</button>
+        <button data-section="analisis" class="nav-link">Análisis</button>
+      </nav>
     </div>
-    <!-- Fin del ejemplo -->
+  </header>
+
+  <main class="container mx-auto px-4 py-8">
+    <section id="inicio" class="section-content active space-y-6">
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-2xl font-semibold text-sky-700 mb-3">Bienvenido al Explorador de macOS Server</h2>
+        <p class="text-slate-700 leading-relaxed">
+          Esta aplicación interactiva te guiará a través de la historia, características, evolución y el estado actual de macOS Server, basándose en un informe detallado...
+        </p>
+      </div>
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h3 class="text-xl font-semibold text-sky-700 mb-4 text-center">Distribución de Servicios Clave</h3>
+        <div class="chart-container">
+          <canvas id="serviceCategoriesChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section id="evolucion" class="section-content space-y-6">
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-2xl font-semibold text-sky-700 mb-4">Evolución Histórica de macOS Server</h2>
+        <div id="timelineContainer"></div>
+      </div>
+      <div id="timelineDetail" class="bg-white p-6 rounded-lg shadow mt-6" style="display:none;">
+        <h3 id="timelineDetailTitle" class="text-xl font-semibold text-sky-700 mb-2"></h3>
+        <p id="timelineDetailContent" class="text-slate-700 leading-relaxed"></p>
+      </div>
+    </section>
+
+    <section id="servicios" class="section-content space-y-6">
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-2xl font-semibold text-sky-700 mb-4">Servicios Clave de macOS Server</h2>
+        <div class="mb-4">
+          <label for="serviceFilter" class="block text-sm font-medium text-slate-700 mb-1">Filtrar por categoría:</label>
+          <select id="serviceFilter" class="w-full sm:w-1/2 p-2 border border-slate-300 rounded-md shadow-sm">
+            <option value="all">Todas las categorías</option>
+            <option value="gestion">Gestión y Directorio</option>
+            <option value="compartir">Compartir y Colaboración</option>
+            <option value="infraestructura">Infraestructura de Red</option>
+            <option value="almacenamiento">Almacenamiento y Backup</option>
+          </select>
+        </div>
+        <div id="servicesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+      <div id="serviceModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4" style="display:none;z-index:100;">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center mb-4">
+            <h3 id="serviceModalTitle" class="text-xl font-semibold text-sky-700"></h3>
+            <button id="closeServiceModal" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+          </div>
+          <div id="serviceModalContent" class="text-slate-700 leading-relaxed"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="transicion" class="section-content space-y-6">
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-2xl font-semibold text-sky-700 mb-4">Transición y Futuro</h2>
+        <div id="tabsContainer" class="mb-4 flex border-b border-slate-300">
+          <button data-tab="razones" class="tab-button active">Razones</button>
+          <button data-tab="estado" class="tab-button">Estado Actual</button>
+          <button data-tab="alternativas" class="tab-button">Alternativas</button>
+        </div>
+        <div id="razonesContent" class="tab-content active"></div>
+        <div id="estadoContent" class="tab-content"></div>
+        <div id="alternativasContent" class="tab-content"></div>
+      </div>
+    </section>
+
+    <section id="analisis" class="section-content space-y-6">
+      <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-2xl font-semibold text-sky-700 mb-4">Análisis Comparativo</h2>
+        <div id="accordionContainer" class="space-y-3"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="text-center py-6 mt-12 border-t border-slate-300">
+    <p class="text-sm text-slate-600">Aplicación interactiva basada en el “Informe Completo sobre macOS Server”.</p>
+  </footer>
+
+  <script>
+    const sections = {
+      inicio: {},
+      evolucion: {
+        data: [
+          { year: "1999", era: "Orígenes: Rhapsody y Mac OS X Server 1.0", content: "Mac OS X Server 1.0, basado en Rhapsody..." },
+          { year: "2001-2005", era: "Era PowerPC (OS X Server 10.0 - 10.4)", content: "OS X Server se alinea con OS X de escritorio..." },
+          { year: "2006-2010", era: "Transición a Intel (10.5 - 10.6)", content: "Migración a procesadores Intel..." },
+          { year: "2011-2017", era: "La ‘App’ Server (10.7 - 10.13)", content: "OS X Server como app de la App Store..." },
+          { year: "2018-2021", era: "Declive y Reducción (10.14 - 11.0)", content: "Discontinuación de varios servicios..." },
+          { year: "2022", era: "Fin de la App Server", content: "Última versión 5.12.2; Profile Manager y Open Directory integrados en Ventura." }
+        ]
+      },
+      servicios: {
+        data: [
+          { id:1, name:"Open Directory", category:"gestion", short_desc:"Gestión centralizada de usuarios y grupos.", full_desc:"Implementación de LDAP y Kerberos..." },
+          { id:2, name:"Profile Manager", category:"gestion", short_desc:"Gestión de MDM.", full_desc:"Solución MDM para Macs, iPhones..." },
+          { id:3, name:"File Sharing", category:"compartir", short_desc:"Compartir archivos (AFP, SMB, NFS).", full_desc:"Compartición de carpetas y permisos." },
+          { id:4, name:"Caching Server", category:"infraestructura", short_desc:"Acelera descargas de Apple.", full_desc:"Almacenamiento local de actualizaciones." },
+          { id:5, name:"Time Machine Server", category:"almacenamiento", short_desc:"Backups centralizadas.", full_desc:"Copia de seguridad de múltiples Macs." },
+          { id:6, name:"Wiki Server", category:"compartir", short_desc:"Wiki y blogs colaborativos.", full_desc:"Plataforma web para documentación." },
+          { id:7, name:"Calendar Server", category:"compartir", short_desc:"Calendarios (CalDAV).", full_desc:"Compartición y programación de eventos." },
+          { id:8, name:"Contacts Server", category:"compartir", short_desc:"Contactos (CardDAV).", full_desc:"Sincronización de libretas de direcciones." },
+          { id:9, name:"Mail Server", category:"infraestructura", short_desc:"Correo (SMTP, IMAP, POP3).", full_desc:"SpamAssassin, ClamAV integrado." },
+          { id:10, name:"Messages Server", category:"compartir", short_desc:"Mensajería XMPP.", full_desc:"Chat privado en la organización." },
+          { id:11, name:"VPN Server", category:"infraestructura", short_desc:"VPN (L2TP/IPSec).", full_desc:"Acceso remoto seguro." },
+          { id:12, name:"Web Server", category:"infraestructura", short_desc:"Apache integrado.", full_desc:"Host de sitios estáticos/dinámicos." },
+          { id:13, name:"Xsan", category:"gestion", short_desc:"SAN de alta velocidad.", full_desc:"Almacenamiento compartido para video." },
+          { id:14, name:"NetBoot/NetInstall/NetRestore", category:"gestion", short_desc:"Instalación en red.", full_desc:"Arranque, instalación y restauración remota." },
+          { id:15, name:"Software Update Server", category:"gestion", short_desc:"Distribución de actualizaciones.", full_desc:"Control de versiones de software." }
+        ]
+      },
+      transicion: {
+        razones: [
+          { title:"Auge de la nube", content:"Servicios como Google Workspace..." },
+          { title:"Complejidad y mantenimiento", content:"Costos de seguridad y actualizaciones..." },
+          { title:"Alternativas open source", content:"DNS, DHCP, Web, VPN en macOS." },
+          { title:"Enfoque en consumidor", content:"Apple prioriza iCloud y productos principales." },
+          { title:"Mercado dominado", content:"Linux y Windows Server siguen líderes." }
+        ],
+        estado: [
+          { title:"Profile Manager y Open Directory", content:"Integrados en Ventura+ vía CLI." },
+          { title:"Caching, File Sharing, Time Machine", content:"Disponibles en Preferencias del Sistema." },
+          { title:"Otros servicios", content:"Requieren CLI o terceros." },
+          { title:"Xsan", content:"Sigue para flujos de trabajo especializados." }
+        ],
+        alternativas: [
+          { title:"MDM", content:"Jamf, Intune, Kandji, Mosyle." },
+          { title:"Directorio", content:"Active Directory, FreeIPA." },
+          { title:"Colaboración", content:"Google Workspace, Nextcloud." },
+          { title:"Web/App", content:"Nginx, Docker, AWS." },
+          { title:"VPN", content:"WireGuard, OpenVPN." }
+        ]
+      },
+      analisis: {
+        ventajas: [
+          "Facilidad de uso",
+          "Integración con Apple",
+          "Costo-efectivo",
+          "Todo en uno"
+        ],
+        desventajas: [
+          "Escalabilidad limitada",
+          "Dependencia de hardware Apple",
+          "Funcionalidades cambiantes",
+          "Control granular reducido"
+        ]
+      }
+    };
+
+    const serviceCategoriesChartData = {
+      labels: ['Gestión y Directorio','Compartir y Colaboración','Infraestructura de Red','Almacenamiento y Backup'],
+      datasets: [{
+        data: [5,5,4,1],
+        backgroundColor:['rgba(59,130,246,0.7)','rgba(16,185,129,0.7)','rgba(239,68,68,0.7)','rgba(245,158,11,0.7)'],
+        borderColor:['rgba(59,130,246,1)','rgba(16,185,129,1)','rgba(239,68,68,1)','rgba(245,158,11,1)'],
+        borderWidth:1
+      }]
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const mainNav = document.getElementById('mainNav');
+      const sectionsEls = document.querySelectorAll('.section-content');
+      const timelineContainer = document.getElementById('timelineContainer');
+      const timelineDetail = document.getElementById('timelineDetail');
+      const timelineTitle = document.getElementById('timelineDetailTitle');
+      const timelineContent = document.getElementById('timelineDetailContent');
+      const servicesContainer = document.getElementById('servicesContainer');
+      const filter = document.getElementById('serviceFilter');
+      const modal = document.getElementById('serviceModal');
+      const modalTitle = document.getElementById('serviceModalTitle');
+      const modalContent = document.getElementById('serviceModalContent');
+      const closeModal = document.getElementById('closeServiceModal');
+      const tabs = document.getElementById('tabsContainer');
+      const tabContents = {
+        razones: document.getElementById('razonesContent'),
+        estado: document.getElementById('estadoContent'),
+        alternativas: document.getElementById('alternativasContent')
+      };
+      const accordion = document.getElementById('accordionContainer');
+
+      function showSection(id) {
+        sectionsEls.forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        mainNav.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
+        mainNav.querySelector(`[data-section="${id}"]`).classList.add('active');
+        window.scrollTo(0,0);
+      }
+
+      mainNav.addEventListener('click', e => {
+        if (!e.target.matches('.nav-link')) return;
+        showSection(e.target.dataset.section);
+      });
+
+      sections.evolucion.data.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'timeline-item cursor-pointer hover:bg-slate-50 p-2 rounded';
+        div.innerHTML = `<div class="timeline-marker"></div>
+          <h4 class="font-semibold text-sky-600">${item.year} - ${item.era}</h4>
+          <p class="text-sm text-slate-600 truncate">${item.content.substring(0,100)}...</p>`;
+        div.addEventListener('click', () => {
+          timelineTitle.textContent = `${item.year} - ${item.era}`;
+          timelineContent.textContent = item.content;
+          timelineDetail.style.display = 'block';
+        });
+        timelineContainer.appendChild(div);
+      });
+
+      function renderServices(cat='all') {
+        servicesContainer.innerHTML = '';
+        const list = sections.servicios.data.filter(s => cat==='all'||s.category===cat);
+        if (!list.length) {
+          servicesContainer.innerHTML = '<p class="text-center text-slate-600 col-span-3">No hay servicios.</p>';
+          return;
+        }
+        list.forEach(s => {
+          const card = document.createElement('div');
+          card.className = 'service-card';
+          card.innerHTML = `<h4 class="font-semibold text-sky-600 text-lg mb-1">${s.name}</h4>
+            <p class="text-sm text-slate-600">${s.short_desc}</p>`;
+          card.addEventListener('click', () => {
+            modalTitle.textContent = s.name;
+            modalContent.innerHTML = `<p class="font-semibold mb-2">Descripción:</p><p>${s.full_desc}</p>`;
+            modal.style.display = 'flex';
+          });
+          servicesContainer.appendChild(card);
+        });
+      }
+
+      filter.addEventListener('change', e => renderServices(e.target.value));
+      closeModal.addEventListener('click', () => modal.style.display='none');
+      modal.addEventListener('click', e => { if (e.target===modal) modal.style.display='none'; });
+
+      tabs.addEventListener('click', e => {
+        if (!e.target.matches('.tab-button')) return;
+        tabs.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+        e.target.classList.add('active');
+        Object.values(tabContents).forEach(c=>c.classList.remove('active'));
+        tabContents[e.target.dataset.tab].classList.add('active');
+      });
+
+      tabContents.razones.innerHTML = sections.transicion.razones.map(r=>
+        `<div class="mb-3"><h5 class="font-semibold text-slate-700">${r.title}</h5><p class="text-sm text-slate-600">${r.content}</p></div>`
+      ).join('');
+      tabContents.estado.innerHTML = sections.transicion.estado.map(s=>
+        `<div class="mb-3"><h5 class="font-semibold text-slate-700">${s.title}</h5><p class="text-sm text-slate-600">${s.content}</p></div>`
+      ).join('');
+      tabContents.alternativas.innerHTML = sections.transicion.alternativas.map(a=>
+        `<div class="mb-3"><h5 class="font-semibold text-slate-700">${a.title}</h5><p class="text-sm text-slate-600">${a.content}</p></div>`
+      ).join('');
+
+      const accVent = document.createElement('div');
+      accVent.innerHTML = `<button class="accordion-button flex justify-between items-center">
+        <span>Ventajas de macOS Server</span><span class="transform transition-transform duration-200 text-sky-600">&#x25BC;</span>
+      </button><div class="accordion-content">
+        <ul class="list-disc list-inside space-y-1 text-sm text-slate-600">
+          ${sections.analisis.ventajas.map(v=>`<li>${v}</li>`).join('')}
+        </ul></div>`;
+      accordion.appendChild(accVent);
+
+      const accDes = document.createElement('div');
+      accDes.innerHTML = `<button class="accordion-button flex justify-between items-center">
+        <span>Desventajas y Limitaciones</span><span class="transform transition-transform duration-200 text-sky-600">&#x25BC;</span>
+      </button><div class="accordion-content">
+        <ul class="list-disc list-inside space-y-1 text-sm text-slate-600">
+          ${sections.analisis.desventajas.map(d=>`<li>${d}</li>`).join('')}
+        </ul></div>`;
+      accordion.appendChild(accDes);
+
+      accordion.querySelectorAll('.accordion-button').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          const content = btn.nextElementSibling;
+          const icon = btn.querySelector('span:last-child');
+          const open = content.style.display==='block';
+          document.querySelectorAll('.accordion-content').forEach(c=>{
+            c.style.display='none'; c.previousElementSibling.querySelector('span:last-child').innerHTML='&#x25BC;';
+          });
+          if(!open){ content.style.display='block'; icon.innerHTML='&#x25B2;'; }
+        });
+      });
+
+      new Chart(
+        document.getElementById('serviceCategoriesChart').getContext('2d'),
+        { type:'doughnut', data:serviceCategoriesChartData,
+          options:{
+            responsive:true, maintainAspectRatio:false,
+            plugins:{
+              legend:{ position:'top' },
+              tooltip:{ callbacks:{
+                label(ctx){ return `${ctx.label}: ${ctx.parsed} servicios`; }
+              }}
+            }
+          }
+        }
+      );
+
+      showSection('inicio');
+      renderServices();
+    });
+  </script>
 </body>
 </html>
